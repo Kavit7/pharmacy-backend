@@ -34,6 +34,9 @@ return [
                 [
                     'class' => \yii\log\FileTarget::class,
                     'levels' => ['error', 'warning'],
+                    'logFile' => '@runtime/logs/app.log',
+                    'categories' => ['jwt', 'application'],
+
                 ],
             ],
         ],

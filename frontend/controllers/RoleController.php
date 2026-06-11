@@ -11,39 +11,44 @@ class RoleController extends ActiveController{
 
 public $modelClass= Role::class;
 
- public function behaviors()
+public function behaviors()
 {
-    $behaviors = [];
+  $behaviors = parent::behaviors(); // 🔥 muhimu sana
 
-    // 🔥 FIRST: CORS
+    // 🔥 toa authenticator kwanza
+    if (isset($behaviors['authenticator'])) {
+        $auth = $behaviors['authenticator'];
+        unset($behaviors['authenticator']);
+    } else {
+        $auth = [
+            'class' => \common\components\JwtAuth::class,
+        ];
+    }
+
+    // 🔥 weka CORS
     $behaviors['corsFilter'] = [
         'class' => \yii\filters\Cors::class,
         'cors' => [
-            'Origin' => ['*'],
+            'Origin' => ['http://localhost:5173'],
             'Access-Control-Request-Method' => ['GET','POST','PUT','DELETE','OPTIONS'],
-            'Access-Control-Allow-Headers' => ['*'],
+            'Access-Control-Request-Headers' => [
+                'Authorization',
+                'Content-Type',
+                'X-Requested-With',
+                'Accept',
+                'Origin'
+            ],
+            'Access-Control-Allow-Credentials' => true,
         ],
     ];
 
-    // 🔥 THEN parent behaviors
-    return array_merge(
-        $behaviors,
-        parent::behaviors()
-    );
+    // 🔥 rudisha JWT (middleware yako)
+    $auth['except'] = ['options']; // muhimu
+    $behaviors['authenticator'] = $auth;
+
+    return $behaviors;
 }
 
-public function beforeAction($action)
-{
-    if (Yii::$app->request->isOptions) {
-        Yii::$app->response->statusCode = 200;
-        Yii::$app->response->headers->set('Access-Control-Allow-Origin', '*');
-        Yii::$app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        Yii::$app->response->headers->set('Access-Control-Allow-Headers', '*');
-        return false;
-    }
-
-    return parent::beforeAction($action);
-}
 
 
 

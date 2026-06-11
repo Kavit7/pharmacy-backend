@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+use yii\web\IdentityInterface;
 
 use Yii;
 
@@ -116,7 +117,7 @@ use Yii;
  * @property Workflow[] $workflows1
  * @property Workflow[] $workflows2
  */
-class User extends \yii\db\ActiveRecord
+class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
 
 
@@ -236,7 +237,6 @@ class User extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Alert::class, ['updated_by' => 'id']);
     }
-
     /**
      * Gets query for [[BlacklistedEntities]].
      *
@@ -1026,5 +1026,28 @@ class User extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Workflow::class, ['updated_by' => 'id']);
     }
+ public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
 
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        return null; // unaweza later kuboresha JWT hapa
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getAuthKey()
+    {
+        return null; // kwa JWT unaweza ignore
+    }
+
+    public function validateAuthKey($authKey)
+    {
+        return false;
+    }
 }

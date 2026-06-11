@@ -26,10 +26,12 @@ public static function generateToken($user){
 
 public static function validateToken($token){
   try{
-    JWT::decode($token,new Key(self::$key,'HS256'));
+    // Yii::info($decoded, 'jwt-debug');
+    // Yii::info($e->getMessage(), 'jwt-error');
+   return JWT::decode($token,new Key(self::$key,'HS256'));
     
   }
-  catch(\Exception $e){
+  catch(\Exception $e){       
     return null;
   }
 
